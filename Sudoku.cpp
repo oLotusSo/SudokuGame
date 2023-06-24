@@ -163,7 +163,10 @@ void digHolesUnique(vector<vector<int>>& board, int numHoles) {
 void printSudoku(const vector<vector<int>>& board) {
     for (int row = 0; row < 9; row++) {
         for (int col = 0; col < 9; col++) {
-            cout << board[row][col] << " ";
+            if(board[row][col] == 0)
+                cout << "$" << " "; //空格用$表示
+            else
+                cout << board[row][col] << " ";
         }
         cout << endl;
     }
@@ -213,14 +216,16 @@ void parameterCheck(char* argv[]) {
             cerr << "Failed to open output file." << endl;
             return;
         }
-        string str;
+        string str, temp;
         int no = 0;
         while (inputFile >> str) {
             str = str.substr(1, str.length() - 2);
             no = stoi(str);
             for (int i = 0; i < 9; i++) {
                 for (int j = 0; j < 9; j++) {
-                    inputFile >> board[i][j];
+                    inputFile >> temp;
+                    if (temp == "$")board[i][j] = 0;
+                    else board[i][j] = stoi(temp);
                 }
             }
             if (solveProblem(board)) {
