@@ -4,19 +4,19 @@
 
 例如：Sudoku.exe -c 100 表示生成100个数独终局至文件。
 
-参数         意义                                        范围限制                                     示例
+参数&emsp;&emsp;意义&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;范围限制&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;示例
 
--c        生成数独终局                             1-1000000                          Sudoku.exe -c 20
+-c&emsp;&emsp;生成数独终局 &emsp; &emsp;&emsp;&emsp;&emsp;&emsp;&emsp;1-1000000&emsp; &emsp;&emsp;&emsp;&emsp;&emsp;&emsp;Sudoku.exe -c 20
 
--s        求解数独(会输出至output.txt) 绝对或相对路径                  Sudoku.exe -s solveFile.txt 
+-s&emsp;&emsp;求解数独(会输出至output.txt) 绝对或相对路径&emsp;&emsp;&emsp;&emsp;&emsp;Sudoku.exe -s solveFile.txt 
 
--n        生成数独游戏($表示需要填)     1-10000                              Sudoku.exe -n 1000
+-n&emsp;&emsp;生成数独游戏($表示需要填) &emsp;1-10000&emsp; &emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;Sudoku.exe -n 1000
 
--m       生成游戏难度(1简单，3难)       1-3                                      Sudoku.exe -n 1000 -m 1
+-m  &emsp;生成游戏难度(1简单，3难)&emsp;&emsp;1-3 &emsp; &emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;Sudoku.exe -n 1000 -m 1
 
--r         生成游戏挖空数量范围              20-55                                  Sudoku.exe -n 20 -r 30~45
+-r&emsp;&emsp;生成游戏挖空数量范围 &emsp; &emsp;&emsp;20-55 &emsp; &emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;Sudoku.exe -n 20 -r 30~45
 
--u        生成数独游戏的解唯一              无参数                                 Sudoku.exe -n 20 -u
+-u&emsp;&emsp;生成数独游戏的解唯一  &emsp;&emsp;&emsp;无参数 &emsp;  &emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;Sudoku.exe -n 20 -u
 
 生成或求解的数独格式：
 
@@ -26,7 +26,7 @@
 
 例如：
 
-[1]
+[1] <br/>
 9 $ $ $ 6 1 $ 3 $ <br/>
 1 $ 3 4 9 8 7 2 $ <br/>
 7 4 8 $ 2 3 6 9 1 <br/>
