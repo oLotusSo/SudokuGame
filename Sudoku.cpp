@@ -1,35 +1,31 @@
-#include <iostream>
-#include <vector>
-#include <cstdlib>
-#include <ctime>
-#include <fstream>
-#include <string>
-#include <algorithm>
+#include "Sudoku.h"
+#include <random>
+#include <cstdio>
+
 #pragma warning (disable: 4996)
-using namespace std;
 
 const char* finalFile = "./finalFile.txt";
 const char* problemFile = "./problemFile.txt";
 const char* solveFile = "./solveFile.txt";
 const char* output = "./output.txt";
 
-// ¼ì²éÊı×ÖnumÊÇ·ñ¿ÉÒÔ·ÅÖÃÔÚ(row, col)Î»ÖÃ
-bool isValid(vector<vector<int>>& board, int row, int col, int num) {
-    // ¼ì²éĞĞÊÇ·ñÓĞÖØ¸´Êı×Ö
+// æ£€æŸ¥æ•°å­—numæ˜¯å¦å¯ä»¥æ”¾ç½®åœ¨(row, col)ä½ç½®
+bool isValid(vector<vector<int> >& board, int row, int col, int num) {
+    // æ£€æŸ¥è¡Œæ˜¯å¦æœ‰é‡å¤æ•°å­—
     for (int i = 0; i < 9; i++) {
         if (board[row][i] == num) {
             return false;
         }
     }
 
-    // ¼ì²éÁĞÊÇ·ñÓĞÖØ¸´Êı×Ö
+    // æ£€æŸ¥åˆ—æ˜¯å¦æœ‰é‡å¤æ•°å­—
     for (int i = 0; i < 9; i++) {
         if (board[i][col] == num) {
             return false;
         }
     }
 
-    // ¼ì²é3x3Ğ¡·½¸ñÄÚÊÇ·ñÓĞÖØ¸´Êı×Ö
+    // æ£€æŸ¥3x3å°æ–¹æ ¼å†…æ˜¯å¦æœ‰é‡å¤æ•°å­—
     int startRow = (row / 3) * 3;
     int startCol = (col / 3) * 3;
     for (int i = 0; i < 3; i++) {
@@ -43,13 +39,13 @@ bool isValid(vector<vector<int>>& board, int row, int col, int num) {
     return true;
 }
 
-// µİ¹éÉú³ÉÊı¶ÀÖÕ¾Ö
-bool generateSudoku(vector<vector<int>>& board, int row, int col) {
+// é€’å½’ç”Ÿæˆæ•°ç‹¬ç»ˆå±€
+bool generateSudoku(vector<vector<int> >& board, int row, int col) {
     if (col == 9) {
         col = 0;
         row++;
         if (row == 9) {
-            return true;  // Êı¶ÀÖÕ¾ÖÉú³ÉÍê³É
+            return true;  // æ•°ç‹¬ç»ˆå±€ç”Ÿæˆå®Œæˆ
         }
     }
 
@@ -58,7 +54,9 @@ bool generateSudoku(vector<vector<int>>& board, int row, int col) {
     }
 
     vector<int> numbers = { 1, 2, 3, 4, 5, 6, 7, 8, 9 };
-    random_shuffle(numbers.begin(), numbers.end());
+    random_device rd;
+    mt19937 g(rd());
+    shuffle(numbers.begin(), numbers.end(), g);
 
     for (int num : numbers) {
         if (isValid(board, row, col, num)) {
@@ -73,8 +71,8 @@ bool generateSudoku(vector<vector<int>>& board, int row, int col) {
     return false;
 }
 
-// ÍÚµôÒ»Ğ©¿ÕÉú³ÉÊı¶ÀÓÎÏ·
-void digHoles(vector<vector<int>>& board, int numHoles) {
+// æŒ–æ‰ä¸€äº›ç©ºç”Ÿæˆæ•°ç‹¬æ¸¸æˆ
+void digHoles(vector<vector<int> >& board, int numHoles) {
     for (int i = 0; i < numHoles; i++) {
         int row = rand() % 9;
         int col = rand() % 9;
@@ -86,13 +84,13 @@ void digHoles(vector<vector<int>>& board, int numHoles) {
     }
 }
 
-// µİ¹é½âÊı¶À
-void solveSudoku(vector<vector<int>>& board, int row, int col, int& count) {
+// é€’å½’è§£æ•°ç‹¬
+void solveSudoku(vector<vector<int> >& board, int row, int col, int& count) {
     if (col == 9) {
         col = 0;
         row++;
         if (row == 9) {
-            count++; // Í³¼Æ½âµÄ¸öÊı
+            count++; // ç»Ÿè®¡è§£çš„ä¸ªæ•°
             return;
         }
     }
@@ -109,7 +107,7 @@ void solveSudoku(vector<vector<int>>& board, int row, int col, int& count) {
     }
 }
 
-bool findUnassignedLocation(vector<vector<int>> board, int& row, int& col) {
+bool findUnassignedLocation(vector<vector<int> > board, int& row, int& col) {
     for (row = 0; row < 9; row++) {
         for (col = 0; col < 9; col++) {
             if (board[row][col] == 0) {
@@ -119,10 +117,11 @@ bool findUnassignedLocation(vector<vector<int>> board, int& row, int& col) {
     }
     return false;
 }
-bool solveProblem(vector<vector<int>> &board) {
+
+bool solveProblem(vector<vector<int> > &board) {
     int row, col;
     if (!findUnassignedLocation(board, row, col)) {
-        return true; // Êı¶ÀÒÑ½â¾ö
+        return true; // æ•°ç‹¬å·²è§£å†³
     }
 
     for (int num = 1; num <= 9; num++) {
@@ -131,14 +130,14 @@ bool solveProblem(vector<vector<int>> &board) {
             if (solveProblem(board)) {
                 return true;
             }
-            board[row][col] = 0; // »ØËİ
+            board[row][col] = 0; // å›æº¯
         }
     }
-    return false; // ÎŞ½â
+    return false; // æ— è§£
 }
 
-//Éú³ÉÎ¨Ò»½âÊı¶ÀÓÎÏ·
-void digHolesUnique(vector<vector<int>>& board, int numHoles) {
+//ç”Ÿæˆå”¯ä¸€è§£æ•°ç‹¬æ¸¸æˆ
+void digHolesUnique(vector<vector<int> >& board, int numHoles) {
     for (int i = 0; i < numHoles; i++) {
         int row = rand() % 9;
         int col = rand() % 9;
@@ -149,9 +148,9 @@ void digHolesUnique(vector<vector<int>>& board, int numHoles) {
         int temp = board[row][col];
         board[row][col] = 0;
 
-        // ¼ì²éÎ¨Ò»½â
+        // æ£€æŸ¥å”¯ä¸€è§£
         int count = 0;
-        vector<vector<int>> tempBoard = board;
+        vector<vector<int> > tempBoard = board;
         generateSudoku(tempBoard, 0, 0);
         solveSudoku(tempBoard, 0, 0, count);
         if (count != 1) {
@@ -160,12 +159,12 @@ void digHolesUnique(vector<vector<int>>& board, int numHoles) {
     }
 }
 
-// ´òÓ¡Êı¶ÀÖÕ¾Ö
-void printSudoku(const vector<vector<int>>& board) {
+// æ‰“å°æ•°ç‹¬ç»ˆå±€
+void printSudoku(const vector<vector<int> >& board) {
     for (int row = 0; row < 9; row++) {
         for (int col = 0; col < 9; col++) {
             if(board[row][col] == 0)
-                cout << "$" << " "; //¿Õ¸ñÓÃ$±íÊ¾
+                cout << "$" << " "; //ç©ºæ ¼ç”¨$è¡¨ç¤º
             else
                 cout << board[row][col] << " ";
         }
@@ -173,37 +172,36 @@ void printSudoku(const vector<vector<int>>& board) {
     }
 }
 
-// ¼ì²éÊäÈë²ÎÊı
+// æ£€æŸ¥è¾“å…¥å‚æ•°
 void parameterCheck(char* argv[]) {
-    vector<vector<int>> board(9, vector<int>(9, 0)), zero(9, vector<int>(9, 0));
-    FILE* stream;
+    vector<vector<int> > board(9, vector<int>(9, 0)), zero(9, vector<int>(9, 0));
     if (argv[1] == NULL) {
-        cout << "ÇëÊäÈë²ÎÊı¡£" << endl;
+        cout << "è¯·è¾“å…¥å‚æ•°ã€‚" << endl;
     }else if (strcmp(argv[1], "-c") == 0) {
         if (argv[2] == NULL) {
-            cout << "ÇëÊäÈë²ÎÊı¡£" << endl;
+            cout << "è¯·è¾“å…¥å‚æ•°ã€‚" << endl;
             return;
         }
         int num = atoi(argv[2]);
         if (num < 1 || num >1000000) {
-            cout << "²ÎÊıc³¬³ö·¶Î§(²Î¿¼·¶Î§£º1~1000000)¡£" << endl;
+            cout << "å‚æ•°cè¶…å‡ºèŒƒå›´(å‚è€ƒèŒƒå›´ï¼š1~1000000)ã€‚" << endl;
             return;
         }
-        freopen_s(&stream, finalFile, "w", stdout);
+        freopen(finalFile, "w", stdout);
         for (int i = 0; i < num; i++) {
             if (generateSudoku(board, 0, 0)) {
                 cout << "[" << i + 1 << "]" << endl;
                 printSudoku(board);
                 board = zero;
             }else {
-                cout << "Éú³ÉÊı¶ÀÖÕ¾ÖÊ§°Ü¡£" << endl;
+                cout << "ç”Ÿæˆæ•°ç‹¬ç»ˆå±€å¤±è´¥ã€‚" << endl;
             }
         }
         fclose(stdout);
     }
     else if (strcmp(argv[1], "-s") == 0) {
         if (argv[2] == NULL) {
-            cout << "ÇëÊäÈë²ÎÊı¡£" << endl;
+            cout << "è¯·è¾“å…¥å‚æ•°ã€‚" << endl;
             return;
         }
         char* input = argv[2];
@@ -220,26 +218,27 @@ void parameterCheck(char* argv[]) {
         string str, temp;
         while (inputFile >> str) {
             bool flag = true;
-            if (str.length() - 2 < 1) { //ÓÉÓÚĞòºÅÔÚÁ½¸öÖĞÀ¨ºÅÖĞ£¬ÕâÒªÇóstr±ØĞë³¤¶È´óÓÚµÈÓÚ3
-                outputFile << "Êı¶À¸ñÊ½´íÎó¡£" << endl;
+            if (str.length() - 2 < 1) { //ç”±äºåºå·åœ¨ä¸¤ä¸ªä¸­æ‹¬å·ä¸­ï¼Œè¿™è¦æ±‚strå¿…é¡»é•¿åº¦å¤§äºç­‰äº3
+                outputFile << "æ•°ç‹¬æ ¼å¼é”™è¯¯ã€‚" << endl;
                 break;
             }
             str = str.substr(1, str.length() - 2);
-            int cnt = 0, len = str.length(), serialNum = 0;
+            int cnt = 0, serialNum = 0;
+            size_t len = str.length();
             size_t processed_chars = 0;
             try {
                 serialNum = stoi(str, &processed_chars);
             }
             catch (const invalid_argument& e) {
-                outputFile << "Êı¶À¸ñÊ½´íÎó¡£" << endl;
+                outputFile << "æ•°ç‹¬æ ¼å¼é”™è¯¯ã€‚" << endl;
                 break;
             }
             catch (const out_of_range& e) {
-                outputFile << "Êı¶À¸ñÊ½´íÎó¡£" << endl;
+                outputFile << "æ•°ç‹¬æ ¼å¼é”™è¯¯ã€‚" << endl;
                 break;
             }
-            if (len != processed_chars) { //¶ÔstoiµÄÕûÊı½øĞĞ¸üÑÏ¸ñ¼ì²é£¬±ÜÃâÀıÈç1ab,1.2µÈ±»×ª»¯Îª1µÄÇé¿ö
-                outputFile << "Êı¶À¸ñÊ½´íÎó¡£" << endl;
+            if (len != processed_chars) { //å¯¹stoiçš„æ•´æ•°è¿›è¡Œæ›´ä¸¥æ ¼æ£€æŸ¥ï¼Œé¿å…ä¾‹å¦‚1ab,1.2ç­‰è¢«è½¬åŒ–ä¸º1çš„æƒ…å†µ
+                outputFile << "æ•°ç‹¬æ ¼å¼é”™è¯¯ã€‚" << endl;
                 break;
             }
             for (int i = 0; i < 9 && flag; i++) {
@@ -253,26 +252,26 @@ void parameterCheck(char* argv[]) {
                         }
                         catch (const invalid_argument& e) {
                             outputFile << "[" << serialNum << "]" << endl;
-                            outputFile << "Êı¶À¸ñÊ½´íÎó¡£" << endl;
+                            outputFile << "æ•°ç‹¬æ ¼å¼é”™è¯¯ã€‚" << endl;
                             flag = false;
                         }
                         catch (const out_of_range& e) {
                             outputFile << "[" << serialNum << "]" << endl;
-                            outputFile << "Êı¶À¸ñÊ½´íÎó¡£" << endl;
+                            outputFile << "æ•°ç‹¬æ ¼å¼é”™è¯¯ã€‚" << endl;
                             flag = false;
                         }
-                        if (temp.length() != processed_chars) { //¶ÔstoiµÄÕûÊı½øĞĞ¸üÑÏ¸ñ¼ì²é
+                        if (temp.length() != processed_chars) { //å¯¹stoiçš„æ•´æ•°è¿›è¡Œæ›´ä¸¥æ ¼æ£€æŸ¥
                             outputFile << "[" << serialNum << "]" << endl;
-                            outputFile << "Êı¶À¸ñÊ½´íÎó¡£" << endl;
+                            outputFile << "æ•°ç‹¬æ ¼å¼é”™è¯¯ã€‚" << endl;
                             flag = false;
                         }
                     }
                 }
             }
             if (!flag) break;
-            if (cnt != 81) { //Êı¶ÀÈ±Ïî
+            if (cnt != 81) { //æ•°ç‹¬ç¼ºé¡¹
                 outputFile << "[" << serialNum << "]" << endl;
-                outputFile << "Êı¶À¸ñÊ½´íÎó¡£" << endl;
+                outputFile << "æ•°ç‹¬æ ¼å¼é”™è¯¯ã€‚" << endl;
             }else if (solveProblem(board)) {
                 outputFile << "[" << serialNum << "]" << endl;
                 for (int i = 0; i < 9; i++) {
@@ -283,7 +282,7 @@ void parameterCheck(char* argv[]) {
                 }
             }else {
                 outputFile << "[" << serialNum << "]" << endl;
-                outputFile << "Êı¶ÀÎŞ½â¡£" << endl;
+                outputFile << "æ•°ç‹¬æ— è§£ã€‚" << endl;
             }
         }
         inputFile.close();
@@ -291,42 +290,42 @@ void parameterCheck(char* argv[]) {
     }
     else if (strcmp(argv[1], "-n") == 0) {
         if (argv[2] == NULL) {
-            cout << "ÇëÊäÈë²ÎÊı¡£" << endl;
+            cout << "è¯·è¾“å…¥å‚æ•°ã€‚" << endl;
             return;
         }
         int num = atoi(argv[2]);
         if (num < 1 || num > 10000) {
-            cout << "²ÎÊın³¬³ö·¶Î§(²Î¿¼·¶Î§£º1~10000)¡£" << endl;
+            cout << "å‚æ•°nè¶…å‡ºèŒƒå›´(å‚è€ƒèŒƒå›´ï¼š1~10000)ã€‚" << endl;
             return;
         }
         if (argv[3] == NULL) {
-            freopen_s(&stream, problemFile, "w", stdout);
+            freopen(problemFile, "w", stdout);
             for (int i = 0; i < num; i++) {
                 if (generateSudoku(board, 0, 0)) {
                     cout << "[" << i + 1 << "]" << endl;
                     int seed = rand() % 64 + 1;
-                    digHoles(board, seed); //Ëæ»úÍÚÈ¥1-64¸ö¿Õ¸ñ
+                    digHoles(board, seed); //éšæœºæŒ–å»1-64ä¸ªç©ºæ ¼
                     printSudoku(board);
                     board = zero;
                 }else {
-                    cout << "Éú³ÉÊı¶ÀÓÎÏ·Ê§°Ü¡£" << endl;
+                    cout << "ç”Ÿæˆæ•°ç‹¬æ¸¸æˆå¤±è´¥ã€‚" << endl;
                 }
             }
             fclose(stdout);
         }
         else if (strcmp(argv[3], "-m") == 0) {
             if (argv[4] == NULL) {
-                cout << "ÇëÊäÈë²ÎÊı¡£" << endl;
+                cout << "è¯·è¾“å…¥å‚æ•°ã€‚" << endl;
                 return;
             }
             int difficulty = atoi(argv[4]);
             if (difficulty < 1 || difficulty > 3) {
-                cout << "²ÎÊım·¶Î§´íÎó(²Î¿¼·¶Î§£º1~3)¡£" << endl;
+                cout << "å‚æ•°mèŒƒå›´é”™è¯¯(å‚è€ƒèŒƒå›´ï¼š1~3)ã€‚" << endl;
                 return;
             }
-            //Êı¶ÀÄÑ¶È±È½ÏÖ÷¹Û£¬±ØĞë×ÛºÏ¶à¸ö·½Ãæ
-            //ÕâÀï¼òµ¥´¦Àí£¬ÈÏÎª¿ÕÊı>45Îªeasy£¬30~45Îªmedium£¬15~29ÊÇhard
-            freopen_s(&stream, problemFile, "w", stdout);
+            //æ•°ç‹¬éš¾åº¦æ¯”è¾ƒä¸»è§‚ï¼Œå¿…é¡»ç»¼åˆå¤šä¸ªæ–¹é¢
+            //è¿™é‡Œç®€å•å¤„ç†ï¼Œè®¤ä¸ºç©ºæ•°>45ä¸ºeasyï¼Œ30~45ä¸ºmediumï¼Œ15~29æ˜¯hard
+            freopen(problemFile, "w", stdout);
             for (int i = 0; i < num; i++) {
                 int seed = 0;
                 switch (difficulty) {
@@ -342,67 +341,62 @@ void parameterCheck(char* argv[]) {
                 }
                 if (generateSudoku(board, 0, 0)) {
                     cout << "[" << i + 1 << "]" << endl;
-                    digHoles(board, seed); //Ëæ»úÍÚÈ¥seed¸ö¿Õ¸ñ
+                    digHoles(board, seed); //éšæœºæŒ–å»seedä¸ªç©ºæ ¼
                     printSudoku(board);
                     board = zero;
                 }else {
-                    cout << "Éú³ÉÊı¶ÀÓÎÏ·Ê§°Ü¡£" << endl;
+                    cout << "ç”Ÿæˆæ•°ç‹¬æ¸¸æˆå¤±è´¥ã€‚" << endl;
                 }
             }
             fclose(stdout);
         }else if (strcmp(argv[3], "-r") == 0) {
             if (argv[4] == NULL) {
-                cout << "ÇëÊäÈë²ÎÊı¡£" << endl;
+                cout << "è¯·è¾“å…¥å‚æ•°ã€‚" << endl;
                 return;
             }
             const char* split = "~";
-            // ²ğ·Ö×Ö·û´®
+            // æ‹†åˆ†å­—ç¬¦ä¸²
             char* p = strtok(argv[4], split);
             int num1 = 0, num2 = 0;
-            sscanf_s(p, "%d", &num1);
+            sscanf(p, "%d", &num1);
             p = strtok(NULL, split);
-            sscanf_s(p, "%d", &num2);
+            sscanf(p, "%d", &num2);
             if (num1 < 20 || num2 > 55 || num2 < num1) {
-                cout << "²ÎÊır·¶Î§´íÎó(²Î¿¼·¶Î§£º20~55)¡£" << endl;
+                cout << "å‚æ•°rèŒƒå›´é”™è¯¯(å‚è€ƒèŒƒå›´ï¼š20~55)ã€‚" << endl;
                 return;
             }
-            freopen_s(&stream, problemFile, "w", stdout);
+            freopen(problemFile, "w", stdout);
             for (int i = 0; i < num; i++) {
                 int seed = rand() % (num2 - num1 + 1) + num1;
                 if (generateSudoku(board, 0, 0)) {
                     cout << "[" << i + 1 << "]" << endl;
-                    digHoles(board, seed); //Ëæ»úÍÚÈ¥num1~num2¸ö¿Õ¸ñ
+                    digHoles(board, seed); //éšæœºæŒ–å»num1~num2ä¸ªç©ºæ ¼
                     printSudoku(board);
                     board = zero;
                 }else {
-                    cout << "Éú³ÉÊı¶ÀÓÎÏ·Ê§°Ü¡£" << endl;
+                    cout << "ç”Ÿæˆæ•°ç‹¬æ¸¸æˆå¤±è´¥ã€‚" << endl;
                 }
             }
             fclose(stdout);
         }else if (strcmp(argv[3], "-u") == 0) {
-            freopen_s(&stream, problemFile, "w", stdout);
+            freopen(problemFile, "w", stdout);
             for (int i = 0; i < num; i++) {
                 int seed = rand() % 35 + 1;
                 if (generateSudoku(board, 0, 0)) {
                     cout << "[" << i + 1 << "]" << endl;
-                    //ÍÚµÄ¿ÕÔ½ÉÙ£¬Î¨Ò»½â¸ÅÂÊÔ½´ó
-                    digHolesUnique(board, seed); //Ëæ»úÍÚÈ¥1~35¸ö¿Õ¸ñ, ÈôÃ»ÓĞÎ¨Ò»½âÔò»ØÌî
+                    //æŒ–çš„ç©ºè¶Šå°‘ï¼Œå”¯ä¸€è§£æ¦‚ç‡è¶Šå¤§
+                    digHolesUnique(board, seed); //éšæœºæŒ–å»1~35ä¸ªç©ºæ ¼, è‹¥æ²¡æœ‰å”¯ä¸€è§£åˆ™å›å¡«
                     printSudoku(board);
                     board = zero;
                 }else {
-                    cout << "Éú³ÉÊı¶ÀÓÎÏ·Ê§°Ü¡£" << endl;
+                    cout << "ç”Ÿæˆæ•°ç‹¬æ¸¸æˆå¤±è´¥ã€‚" << endl;
                 }
             }
             fclose(stdout);
         }
     }
     else {
-        cout << "²ÎÊı´íÎó(²Î¿¼²ÎÊı£º-c¡¢-s¡¢-n¿ªÍ·)¡£" << endl;
+        cout << "å‚æ•°é”™è¯¯(å‚è€ƒå‚æ•°ï¼š-cã€-sã€-nå¼€å¤´)ã€‚" << endl;
     }
 }
 
-int main(int argc, char* argv[]) {
-    srand(time(NULL));
-    parameterCheck(argv);
-    return 0;
-}
