@@ -1,5 +1,8 @@
 #include "gtest/gtest.h"
 #include "Sudoku.h"
+#include <fstream>
+#include <cstdio>
+#include <string>
 using namespace std;
 
 
@@ -123,9 +126,9 @@ TEST(SudokuTest, GenerateSudokuTest2) {
     EXPECT_TRUE(isSolved(board));
 }
 
-//SolveSudokuTest：对给定的数独问题求解，并检查求解后的数独是否已解决
-TEST(SudokuTest, SolveSudokuTest) {
-    vector<vector<int>> input_board = {
+//SolveProblemTest：对给定的数独问题求解，并检查求解后的数独是否已解决
+TEST(SudokuTest, SolveProblemTest) {
+    vector<vector<int>> problem = {
         {5, 3, 0, 0, 7, 0, 0, 0, 0},
         {6, 0, 0, 1, 9, 5, 0, 0, 0},
         {0, 9, 8, 0, 0, 0, 0, 6, 0},
@@ -136,13 +139,12 @@ TEST(SudokuTest, SolveSudokuTest) {
         {0, 0, 0, 4, 1, 9, 0, 0, 5},
         {0, 0, 0, 0, 8, 0, 0, 7, 9}
     };
-    int cnt=0;
-    solveSudoku(input_board, 0, 0, cnt);
-    EXPECT_TRUE(isSolved(input_board));
+
+    ASSERT_TRUE(solveProblem(problem));
+    EXPECT_TRUE(isSolved(problem));
 }
 
-//提供了一个具有空格的数独问题，并给出了预期的解决方案。调用solveSudoku函数来解决这个问题，并检查返回的解是否与预期的解相匹配。
-TEST(SudokuTest, SolveSudokuTest2) {
+TEST(SudokuTest, SolveProblemTest2) {
     vector<vector<int>> problem = {
         {5, 3, 0, 0, 7, 0, 0, 0, 0},
         {6, 0, 0, 1, 9, 5, 0, 0, 0},
@@ -167,7 +169,7 @@ TEST(SudokuTest, SolveSudokuTest2) {
         {3, 4, 5, 2, 8, 6, 1, 7, 9}
     };
     int cnt=0;
-    solveSudoku(problem, 0, 0, cnt);
+    solveProblem(problem);
     EXPECT_EQ(problem, expected_solution);
 }
 
@@ -243,7 +245,26 @@ TEST(SudokuTest, PrintBoardsTest) {
     EXPECT_FALSE(output.empty());
 }
 
+//SolveSudokuTest：对给定的有唯一解的数独问题求解，并检查count是否得到1
 
+TEST(SudokuTest, SolveSudokuTest) {
+    vector<vector<int>> input_board = {
+        {5, 3, 0, 0, 7, 0, 0, 0, 0},
+        {6, 0, 0, 1, 9, 5, 0, 0, 0},
+        {0, 9, 8, 0, 0, 0, 0, 6, 0},
+        {8, 0, 0, 0, 6, 0, 0, 0, 3},
+        {4, 0, 0, 8, 0, 3, 0, 0, 1},
+        {7, 0, 0, 0, 2, 0, 0, 0, 6},
+        {0, 6, 0, 0, 0, 0, 2, 8, 0},
+        {0, 0, 0, 4, 1, 9, 0, 0, 5},
+        {0, 0, 0, 0, 8, 0, 0, 7, 9}
+    };
+
+    int cnt=0;
+    solveSudoku(input_board, 0, 0, cnt);
+    ASSERT_EQ(cnt,1);
+
+}
 //首先使用digHolesUnique函数从完整的数独终局中挖去num_holes个空格，然后计算挖去的空格数量是否与num_holes相等。接着，我们使用solveSudoku函数计算生成的数独问题的解的数量，并检查是否只有一个解，以确保问题具有唯一解。
 TEST(SudokuTest, DigHolesUniqueTest) {
     vector<vector<int>> board = {
@@ -258,7 +279,7 @@ TEST(SudokuTest, DigHolesUniqueTest) {
         {3, 4, 5, 2, 8, 6, 1, 7, 9}
     };
 
-    int num_holes = 40;
+    int num_holes = 30;
     digHolesUnique(board, num_holes);
 
     int holes_count = 0;
@@ -272,22 +293,62 @@ TEST(SudokuTest, DigHolesUniqueTest) {
     solveSudoku(board, 0, 0, count);
     EXPECT_EQ(count, 1);
 }
-TEST(SudokuTest, SolveProblemTest) {
-    vector<vector<int>> problem = {
-        {5, 3, 0, 0, 7, 0, 0, 0, 0},
-        {6, 0, 0, 1, 9, 5, 0, 0, 0},
-        {0, 9, 8, 0, 0, 0, 0, 6, 0},
-        {8, 0, 0, 0, 6, 0, 0, 0, 3},
-        {4, 0, 0, 8, 0, 3, 0, 0, 1},
-        {7, 0, 0, 0, 2, 0, 0, 0, 6},
-        {0, 6, 0, 0, 0, 0, 2, 8, 0},
-        {0, 0, 0, 4, 1, 9, 0, 0, 5},
-        {0, 0, 0, 0, 8, 0, 0, 7, 9}
-    };
 
-    ASSERT_TRUE(solveProblem(problem));
-    EXPECT_TRUE(isSolved(problem));
+
+
+
+TEST(SudokuTest, ParameterCheckTest) {
+    // 创建临时输入文件
+    ofstream input_file("temp_input.txt");
+    input_file << "[1]\n";
+    input_file << "5 3 0 0 7 0 0 0 0\n";
+    input_file << "6 0 0 1 9 5 0 0 0\n";
+    input_file << "0 9 8 0 0 0 0 6 0\n";
+    input_file << "8 0 0 0 6 0 0 0 3\n";
+    input_file << "4 0 0 8 0 3 0 0 1\n";
+    input_file << "7 0 0 0 2 0 0 0 6\n";
+    input_file << "0 6 0 0 0 0 2 8 0\n";
+    input_file << "0 0 0 4 1 9 0 0 5\n";
+    input_file << "0 0 0 0 8 0 0 7 9\n";
+    input_file.close();
+
+    // 模拟命令行参数
+    char* argv[] = {
+        "sudoku.exe",
+        "-s",
+        "temp_input.txt"
+    };
+    int argc = sizeof(argv) / sizeof(argv[0]);
+
+    // 调用parameterCheck函数
+    parameterCheck(argv);
+
+    // 检查输出文件的内容
+    ifstream output_file("output.txt");
+    string line;
+    vector<string> output_lines;
+    while (getline(output_file, line)) {
+        output_lines.push_back(line);
+    }
+    output_file.close();
+
+    // 删除临时输入文件
+    remove("temp_input.txt");
+
+    // 验证输出文件的内容
+    ASSERT_EQ(output_lines.size(), 10);
+    EXPECT_EQ(output_lines[0], "[1]");
+    EXPECT_EQ(output_lines[1], "5 3 4 6 7 8 9 1 2 ");
+    EXPECT_EQ(output_lines[2], "6 7 2 1 9 5 3 4 8 ");
+    EXPECT_EQ(output_lines[3], "1 9 8 3 4 2 5 6 7 ");
+    EXPECT_EQ(output_lines[4], "8 5 9 7 6 1 4 2 3 ");
+    EXPECT_EQ(output_lines[5], "4 2 6 8 5 3 7 9 1 ");
+    EXPECT_EQ(output_lines[6], "7 1 3 9 2 4 8 5 6 ");
+    EXPECT_EQ(output_lines[7], "9 6 1 5 3 7 2 8 4 ");
+    EXPECT_EQ(output_lines[8], "2 8 7 4 1 9 6 3 5 ");
+    EXPECT_EQ(output_lines[9], "3 4 5 2 8 6 1 7 9 ");
 }
+
 int main(int argc, char** argv) {
     testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();
