@@ -353,5 +353,6 @@ int main(int argc, char** argv) {
     testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();
 }
-// g++ -o sudoku_test sudoku_test.cpp Sudoku.cpp -lgtest -lgtest_main -pthread 
+// To run this test:
+// g++ -o sudoku_test sudoku_test.cpp Sudoku.cpp -lgtest -lgtest_main -std=c++14
 // ./sudoku_test

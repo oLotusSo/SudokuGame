@@ -1,3 +1,7 @@
 *.out
 *.gch
 .vscode
+*.gcov
+*.gcda
+*.gcno
+result/
